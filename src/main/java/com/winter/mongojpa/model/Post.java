@@ -14,17 +14,6 @@ public class Post {
     private String title;
     private String body;
 
-    public Post() {
-    }
-
-    public Post(ObjectId _id, Long postId, Long userId, String title, String body) {
-        this._id = _id;
-        this.postId = postId;
-        this.userId = userId;
-        this.title = title;
-        this.body = body;
-    }
-
     public String get_id() {
         return _id.toHexString();
     }

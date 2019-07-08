@@ -2,7 +2,7 @@ package com.winter.mongojpa.controller;
 
 import com.winter.mongojpa.model.Post;
 import com.winter.mongojpa.repository.PostRepository;
-import javafx.geometry.Pos;
+import com.winter.mongojpa.service.PostService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,34 +15,31 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-    private PostRepository postRepository;
+    private PostService postService;
 
     @RequestMapping("/posts")
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        return postService.getAllPosts();
     }
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.GET)
     public Post getPostById(@PathVariable("id") ObjectId id) {
-        return postRepository.findBy_id(id);
+        return postService.getPostById(id);
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
     public Post createPost(@Valid @RequestBody Post post) {
-        post.set_id(ObjectId.get());
-        postRepository.save(post);
-        return post;
+        return postService.createPost(post);
     }
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.PUT)
     public void updatePost(@PathVariable("id") ObjectId id, @Valid @RequestBody Post post) {
-        post.set_id(id);
-        postRepository.save(post);
+        postService.updatePost(id, post);
     }
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.DELETE)
     public void deletePost(@PathVariable ObjectId id) {
-        postRepository.delete(postRepository.findBy_id(id));
+        postService.deletePost(id);
     }
 
 }
