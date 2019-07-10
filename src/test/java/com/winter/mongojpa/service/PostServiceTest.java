@@ -22,7 +22,7 @@ public class PostServiceTest {
     PostService postService;
 
     @Test
-    public void whenSavingUserICanReturnUser() {
+    public void whenSavingPostICanReturnPost() {
         //given
         Post dummyPost = new Post();
         dummyPost.setTitle("When cruises go wrong");
@@ -38,7 +38,7 @@ public class PostServiceTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void whenSavingUserWithoutPostIdAndUserIdShouldThrowException() {
+    public void whenSavingPostWithoutPostIdAndUserIdShouldThrowException() {
         Post post = new Post();
         post.setTitle("I shouldn't");
         post.setBody("WORK");
