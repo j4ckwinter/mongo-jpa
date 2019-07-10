@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 @Service
 public class PostService {
 
@@ -23,6 +25,8 @@ public class PostService {
     }
 
     public Post createPost(Post post) {
+        requireNonNull(post.getPostId());
+        requireNonNull(post.getUserId());
         post.set_id(ObjectId.get());
         postRepository.save(post);
         return post;

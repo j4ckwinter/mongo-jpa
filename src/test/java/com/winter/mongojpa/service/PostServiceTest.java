@@ -26,6 +26,8 @@ public class PostServiceTest {
         //given
         Post dummyPost = new Post();
         dummyPost.setTitle("When cruises go wrong");
+        dummyPost.setUserId(999L);
+        dummyPost.setPostId(989L);
 
         //when
         when(mockPostRepository.save(any(Post.class))).thenReturn(dummyPost);
@@ -33,5 +35,14 @@ public class PostServiceTest {
 
         //then
         assertThat(createdPost.getTitle()).isSameAs(dummyPost.getTitle());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void whenSavingUserWithoutPostIdAndUserIdShouldThrowException() {
+        Post post = new Post();
+        post.setTitle("I shouldn't");
+        post.setBody("WORK");
+
+        postService.createPost(post);
     }
 }
