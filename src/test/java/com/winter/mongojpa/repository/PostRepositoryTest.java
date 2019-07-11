@@ -23,6 +23,8 @@ public class PostRepositoryTest {
         Post post = new Post();
         ObjectId objectId = new ObjectId();
         post.set_id(objectId);
+        post.setPostId(33L);
+        post.setUserId(44L);
         post.setTitle("Extraction");
         post.setBody("It is what it is");
         postRepository.save(post);
