@@ -58,7 +58,7 @@ public class PostRepositoryTest {
 
         //then
         List<Post> allPosts = postRepository.findAll();
-        assert(allPosts.size() > 15);
+        assertThat(allPosts.size()).isGreaterThan(15);
     }
 
     @Test
