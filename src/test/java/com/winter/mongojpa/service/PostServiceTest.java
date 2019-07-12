@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,16 +25,19 @@ public class PostServiceTest {
     public void whenSavingPostICanReturnPost() {
         //given
         Post dummyPost = new Post();
-        dummyPost.setTitle("When cruises go wrong");
-        dummyPost.setUserId(999L);
-        dummyPost.setPostId(989L);
+        ObjectId objectId = new ObjectId();
+        dummyPost.set_id(objectId);
+        dummyPost.setTitle("Title");
+        dummyPost.setBody("Delete me!!");
+        dummyPost.setUserId(922L);
+        dummyPost.setPostId(911L);
 
         //when
-        when(mockPostRepository.save(any(Post.class))).thenReturn(dummyPost);
-        Post createdPost = postService.createPost(dummyPost);
+        when(mockPostRepository.findBy_id(objectId)).thenReturn(dummyPost);
 
-        //then
-        assertThat(createdPost.getTitle()).isSameAs(dummyPost.getTitle());
+        Post foundPost = postService.getPostById(objectId);
+
+        assertThat(foundPost.getTitle()).isEqualTo(dummyPost.getTitle());
     }
 
     @Test
@@ -43,22 +45,46 @@ public class PostServiceTest {
         //given
         Post dummyPost = new Post();
         ObjectId objectId = new ObjectId();
+        String body = "Like a postman I always deliver";
         dummyPost.set_id(objectId);
         dummyPost.setTitle("I'm a postman");
-        dummyPost.setBody("Like a postman I always deliver");
+        dummyPost.setBody(body);
         dummyPost.setUserId(999L);
         dummyPost.setPostId(989L);
 
         //when
-        when(mockPostRepository.save(any(Post.class))).thenReturn(dummyPost);
-        Post createdPost = postService.createPost(dummyPost);
-        createdPost.setBody("Bloody hell I forgot to deliver");
-        when(mockPostRepository.save(any(Post.class))).thenReturn(createdPost);
-        postService.updatePost(objectId, createdPost);
+        when(mockPostRepository.findBy_id(objectId)).thenReturn(dummyPost);
+        Post foundPost = postService.getPostById(objectId);
+        foundPost.setBody("I forgotted to deliver");
+
+        when(mockPostRepository.save(foundPost)).thenReturn(null);
+        postService.updatePost(objectId, foundPost);
+
+        when(mockPostRepository.findBy_id(objectId)).thenReturn(foundPost);
+        Post updatedPost = postService.getPostById(objectId);
 
         //then
+        assertThat(updatedPost.getTitle()).isEqualTo(dummyPost.getTitle());
+        assertThat(updatedPost.getBody()).isNotEqualTo(dummyPost.getTitle());
+    }
 
+    @Test(expected = NullPointerException.class)
+    public void whenDeletingAPostItIsDeleted() {
+        //given
+        Post dummyPost = new Post();
+        ObjectId objectId = new ObjectId();
+        String body = "Like a postman I always deliver";
+        dummyPost.set_id(objectId);
+        dummyPost.setTitle("I'm a postman");
+        dummyPost.setBody(body);
+        dummyPost.setUserId(999L);
+        dummyPost.setPostId(989L);
 
+        //when
+        when(mockPostRepository.findBy_id(objectId)).thenReturn(null);
+
+        //then
+        assertThat(postService.getPostById(objectId).getBody()).isNull();
     }
 
     @Test(expected = NullPointerException.class)

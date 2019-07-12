@@ -1,7 +1,6 @@
 package com.winter.mongojpa.controller;
 
 import com.winter.mongojpa.model.Post;
-import com.winter.mongojpa.repository.PostRepository;
 import com.winter.mongojpa.service.PostService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;

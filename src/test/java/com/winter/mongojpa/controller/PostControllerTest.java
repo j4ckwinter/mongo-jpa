@@ -13,8 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +39,6 @@ public class PostControllerTest {
 
     @Test
     public void itShouldReturnCreatedPost() throws Exception {
-
         //given
         Post dummyPost = new Post();
         dummyPost.set_id(new ObjectId());
@@ -43,9 +48,28 @@ public class PostControllerTest {
         when(mockPostService.createPost(any(Post.class))).thenReturn(dummyPost);
 
         //then
-        mockMvc.perform(post("/api/posts/").
-                content(objectMapper.writeValueAsString(dummyPost))
+        mockMvc.perform(post("/api/posts/")
+                .content(objectMapper.writeValueAsString(dummyPost))
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(dummyPost.getTitle()));
+    }
+
+    @Test
+    public void itShouldReturnAllPosts() throws Exception {
+        //given
+        Post dummyPost = new Post();
+        dummyPost.set_id(new ObjectId());
+        dummyPost.setTitle("I am title");
+        List<Post> allPosts = Arrays.asList(dummyPost);
+
+        //when
+        when(mockPostService.getAllPosts()).thenReturn(allPosts);
+
+        //then
+        mockMvc.perform(get("/api/posts/")
+                .content(objectMapper.writeValueAsString(dummyPost))
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title").value(dummyPost.getTitle()));
     }
 }
