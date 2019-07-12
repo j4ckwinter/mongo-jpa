@@ -1,5 +1,6 @@
 package com.winter.mongojpa.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.winter.mongojpa.model.Post;
 import com.winter.mongojpa.service.PostService;
@@ -20,8 +21,7 @@ import java.util.List;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,5 +71,24 @@ public class PostControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].title").value(dummyPost.getTitle()));
+    }
+
+    @Test
+    public void itShouldReturnAnUpdatedPost() throws Exception {
+        //given
+        Post dummyPost = new Post();
+        ObjectId objectId = new ObjectId();
+        dummyPost.set_id(objectId);
+        dummyPost.setTitle("I am the title");
+
+        //when
+        when(mockPostService.createPost(any(Post.class))).thenReturn(dummyPost);
+        dummyPost.setTitle("new title");
+        mockPostService.updatePost(objectId, dummyPost);
+
+        //then
+        mockMvc.perform(put("/api/posts/" + objectId)
+                .content(objectMapper.writeValueAsString(dummyPost))
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
     }
 }
