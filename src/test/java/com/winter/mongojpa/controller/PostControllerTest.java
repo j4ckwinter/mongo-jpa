@@ -74,7 +74,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void itShouldReturnAnUpdatedPost() throws Exception {
+    public void itShouldReturnAnOkStatusAfterAnUpdatedPost() throws Exception {
         //given
         Post dummyPost = new Post();
         ObjectId objectId = new ObjectId();
@@ -90,5 +90,25 @@ public class PostControllerTest {
         mockMvc.perform(put("/api/posts/" + objectId)
                 .content(objectMapper.writeValueAsString(dummyPost))
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+    }
+
+    @Test
+    public void itShouldReturnAnOkStatusAfterADeletedPost() throws Exception {
+        //given
+        Post dummyPost = new Post();
+        ObjectId objectId = new ObjectId();
+        dummyPost.set_id(objectId);
+        dummyPost.setTitle("I am the title");
+
+        //when
+        when(mockPostService.createPost(any(Post.class))).thenReturn(dummyPost);
+        dummyPost.setTitle("new title");
+        mockPostService.deletePost(objectId);
+
+        //then
+        mockMvc.perform(delete("/api/posts/" + objectId)
+                .content(objectMapper.writeValueAsString(dummyPost))
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+
     }
 }
